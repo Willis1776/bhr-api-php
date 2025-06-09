@@ -840,4 +840,52 @@ class BambooAPI {
 		$request->url = $this->baseUrl . "/v1/employees/changed/tables/" . urlencode($table) . "?since=" . urlencode($since);
 		return $this->httpHandler->sendRequest( $request );
 	}
+
+    /**
+     *
+     *
+     * @return \BambooHR\API\BambooHTTPResponse
+     * @link https://documentation.bamboohr.com/reference/list-training-types-1
+     */
+    function getTrainingType() {
+        $request = $this->getBambooHttpRequest();
+        $request->method = "GET";
+        $request->url = $this->baseUrl . "/v1/training/type";
+
+        return $this->httpHandler->sendRequest( $request );
+    }
+
+    /**
+     *
+     *
+     * @return \BambooHR\API\BambooHTTPResponse
+     * @link https://documentation.bamboohr.com/reference/list-training-types-1
+     */
+    function getTrainingCategory() {
+        $request = $this->getBambooHttpRequest();
+        $request->method = "GET";
+        $request->url = $this->baseUrl . "/v1/training/category";
+
+        return $this->httpHandler->sendRequest( $request );
+    }
+
+    /**
+     *
+     *
+     * @param int   $employeeId the employee id
+     * @param array $fields     an array of field aliases or ids
+     * @return \BambooHR\API\BambooHTTPResponse
+     * @link http://www.bamboohr.com/api/documentation/employees.php#getEmployee
+     */
+    function getEmployeeTraining($employeeId, $trainingId = null) {
+        $request = $this->getBambooHttpRequest();
+        $request->method = "GET";
+        if ($trainingId) {
+            $request->url = $this->baseUrl . "/v1/training/record/employee/" . intval($employeeId) . "?trainingTypeId=" . intval($trainingId);
+        } else {
+            $request->url = $this->baseUrl . "/v1/training/record/employee/" . intval($employeeId);
+        }
+
+        return $this->httpHandler->sendRequest( $request );
+    }
 }

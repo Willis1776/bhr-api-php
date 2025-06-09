@@ -349,6 +349,40 @@ class BambooAPITest extends TestCase {
 
     /**
      * @test
+     * @covers ::getTrainingType
+     * @uses \BambooHR\API\BambooAPI::__construct
+     * @uses \BambooHR\API\Injector\BambooHTTPRequestInjector
+     */
+    public function testGetTrainingType()
+    {
+        $companyDomain = 'CompanyDomain';
+
+        $mockResponse = $this->createMockBambooHTTPResponse();
+        $mockRequest = $this->createMockBambooHTTPRequest();
+        $mockHandler = $this->createMockBambooCurlHTTP();
+        $mockHandler
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function($subject) use (
+                $mockRequest
+            ) {
+                $this->assertSame($mockRequest, $subject);
+                $this->assertSame('GET', $subject->method);
+                $this->assertContains('/v1/training/type', $subject->url);
+                return true;
+            }))
+            ->will($this->returnValue($mockResponse));
+
+        $bambooApi = new BambooAPI($companyDomain, $mockHandler);
+        $bambooApi->setBambooHttpRequest($mockRequest);
+        $this->assertSame(
+            $mockResponse,
+            $bambooApi->getTrainingType()
+        );
+    }
+
+    /**
+     * @test
      * @covers ::getReport
      * @uses \BambooHR\API\BambooAPI::__construct
      * @uses \BambooHR\API\Injector\BambooHTTPRequestInjector
