@@ -1,12 +1,5 @@
 /reports
 /vendor
 composer.lock
-.phpunit.cache/
 .phpunit.result.cache
-.idea/
-.vscode/
-coverage/
-build/
-.DS_Store
-*.log
 .env
