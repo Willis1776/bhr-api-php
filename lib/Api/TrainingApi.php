@@ -313,11 +313,11 @@ class TrainingApi {
 	public function addNewEmployeeTrainingRecordRequest($employee_id, $add_new_employee_training_record_request, string $contentType = self::CONTENT_TYPES['addNewEmployeeTrainingRecord'][0]) {
 		// PHP 8.0+ only
 		ApiHelper::validateRequiredParameters(
-			params: [
+			[
 				'employee_id' => $employee_id,
 				'add_new_employee_training_record_request' => $add_new_employee_training_record_request,
 			],
-			methodName: 'addNewEmployeeTrainingRecord'
+			'addNewEmployeeTrainingRecord'
 		);
 
 		$resourcePath = '/api/v1/training/record/employee/{employeeId}';
@@ -1345,7 +1345,7 @@ class TrainingApi {
 		// PHP 8.0+ only
 		ApiHelper::validateRequiredParameters(
 			params: [
-				'training_type_id' => $training_type_id,
+				'taining_type_id' => $training_type_id,
 			],
 			methodName: 'deleteTrainingType'
 		);
@@ -1411,639 +1411,6 @@ class TrainingApi {
 		$query = ObjectSerializer::buildQuery($queryParams);
 		return new Request(
 			'DELETE',
-			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-			$headers,
-			is_string($httpBody) ? $httpBody : (string)$httpBody
-		);
-	}
-
-	/**
-	 * Operation listEmployeeTrainings
-	 *
-	 * Get Employee Trainings
-	 *
-	 * @param  int $employee_id The ID of the employee to get a list of trainings for. (required)
-	 * @param  int|null $training_type_id The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee. (optional, default to 0)
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listEmployeeTrainings'] to see the possible values for this operation
-	 *
-	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
-	 * @throws \InvalidArgumentException
-	 * @return \BhrSdk\Model\TrainingRecordList[]
-	 */
-	public function listEmployeeTrainings($employee_id, $training_type_id = 0, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
-		list($response) = $this->listEmployeeTrainingsWithHttpInfo($employee_id, $training_type_id, $contentType);
-		return $response;
-	}
-
-	/**
-	 * Operation listEmployeeTrainingsWithHttpInfo
-	 *
-	 * Get Employee Trainings
-	 *
-	 * @param  int $employee_id The ID of the employee to get a list of trainings for. (required)
-	 * @param  int|null $training_type_id The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee. (optional, default to 0)
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listEmployeeTrainings'] to see the possible values for this operation
-	 *
-	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
-	 * @throws \InvalidArgumentException
-	 * @return array of \BhrSdk\Model\TrainingRecordList[], HTTP status code, HTTP response headers (array of strings)
-	 */
-	public function listEmployeeTrainingsWithHttpInfo($employee_id, $training_type_id = 0, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
-		$request = $this->listEmployeeTrainingsRequest($employee_id, $training_type_id, $contentType);
-		$options = ApiHelper::createHttpClientOption($this->config);
-		
-		// Send request with retry support for timeout errors
-		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
-
-		$statusCode = $response->getStatusCode();
-
-		switch($statusCode) {
-			case 200:
-				return ApiHelper::handleResponseWithDataType(
-					'\BhrSdk\Model\TrainingRecordList[]',
-					$request,
-					$response,
-				);
-		}
-
-		if ($statusCode < 200 || $statusCode > 299) {
-			throw new ApiException(
-				sprintf(
-					'[%d] Error connecting to the API (%s)',
-					$statusCode,
-					(string) $request->getUri()
-				),
-				$statusCode,
-				$response->getHeaders(),
-				(string) $response->getBody()
-			);
-		}
-
-		return ApiHelper::handleResponseWithDataType(
-			'\BhrSdk\Model\TrainingRecordList[]',
-			$request,
-			$response,
-		);
-	}
-
-	/**
-	 * Operation listEmployeeTrainingsAsync
-	 *
-	 * Get Employee Trainings
-	 *
-	 * @param  int $employee_id The ID of the employee to get a list of trainings for. (required)
-	 * @param  int|null $training_type_id The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee. (optional, default to 0)
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listEmployeeTrainings'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Promise\PromiseInterface
-	 */
-	public function listEmployeeTrainingsAsync($employee_id, $training_type_id = 0, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
-		return $this->listEmployeeTrainingsAsyncWithHttpInfo($employee_id, $training_type_id, $contentType)
-			->then(
-				function ($response) {
-					return $response[0];
-				}
-			);
-	}
-
-	/**
-	 * Operation listEmployeeTrainingsAsyncWithHttpInfo
-	 *
-	 * Get Employee Trainings
-	 *
-	 * @param  int $employee_id The ID of the employee to get a list of trainings for. (required)
-	 * @param  int|null $training_type_id The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee. (optional, default to 0)
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listEmployeeTrainings'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Promise\PromiseInterface
-	 */
-	public function listEmployeeTrainingsAsyncWithHttpInfo($employee_id, $training_type_id = 0, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
-		$returnType = '\BhrSdk\Model\TrainingRecordList[]';
-		$request = $this->listEmployeeTrainingsRequest($employee_id, $training_type_id, $contentType);
-
-		return ApiHelper::sendRequestWithRetriesAsync($this->logger, $this->client, $this->config, $request, ApiHelper::createHttpClientOption($this->config))
-			->then(
-				function ($response) use ($returnType) {
-					$content = (string) $response->getBody();
-					if ($returnType !== 'string') {
-						$content = json_decode($content);
-					}
-
-					return [
-						ObjectSerializer::deserialize($content, $returnType, []),
-						$response->getStatusCode(),
-						$response->getHeaders()
-					];
-				},
-				function ($exception) {
-					$response = $exception->getResponse();
-					$statusCode = $response->getStatusCode();
-					throw new ApiException(
-						sprintf(
-							'[%d] Error connecting to the API (%s)',
-							$statusCode,
-							$exception->getRequest()->getUri()
-						),
-						$statusCode,
-						$response->getHeaders(),
-						(string) $response->getBody()
-					);
-				}
-			);
-	}
-
-	/**
-	 * Create request for operation 'listEmployeeTrainings'
-	 *
-	 * @param  int $employee_id The ID of the employee to get a list of trainings for. (required)
-	 * @param  int|null $training_type_id The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee. (optional, default to 0)
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listEmployeeTrainings'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Psr7\Request
-	 */
-	public function listEmployeeTrainingsRequest($employee_id, $training_type_id = 0, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
-		// PHP 8.0+ only
-		ApiHelper::validateRequiredParameters(
-			params: [
-				'employee_id' => $employee_id,
-			],
-			methodName: 'listEmployeeTrainings'
-		);
-
-		$resourcePath = '/api/v1/training/record/employee/{employeeId}';
-		$this->logger?->info('Request method: [GET], URL: ' . $resourcePath);
-		
-		$queryParams = [];
-		$headerParams = [];
-		$httpBody = '';
-		$multipart = false;
-
-		$parameters = [
-			'trainingTypeId' => ['value' => $training_type_id, 'type' => 'integer', 'required' => false, 'style' => 'form', 'explode' => true],
-		];
-
-		// Process parameters and build query values directly
-		$queryParams = [];
-
-		foreach ($parameters as $paramName => $config) {
-			$value = ObjectSerializer::toQueryValue($config['value'], $paramName, $config['type'], $config['style'], $config['explode'], $config['required']);
-			
-			if ($value !== null) {
-				// Merge each parameter value directly into queryParams
-				$queryParams = array_merge($queryParams, $value);
-			}
-		}
-
-		// path params
-		if ($employee_id !== null) {
-			$resourcePath = str_replace(
-				'{' . 'employeeId' . '}',
-				ObjectSerializer::toPathValue((string) $employee_id),
-				$resourcePath
-			);
-		}
-
-		$headers = $this->headerSelector->selectHeaders(
-			['application/json', ],
-			$contentType,
-			$multipart
-		);
-
-		// Authentication methods
-		
-		// Basic authentication
-		if (!empty($this->config->getUsername()) || !(empty($this->config->getPassword()))) {
-			$this->logger?->info('Using Basic authentication');	
-			$headers['Authorization'] = 'Basic ' . base64_encode($this->config->getUsername() . ":" . $this->config->getPassword());
-		}
-		
-		// OAuth/Bearer authentication
-		if (!empty($this->config->getAccessToken())) {
-			$this->logger?->info('Using Bearer authentication');
-			$headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-		}
-
-		$defaultHeaders = [];
-		if ($this->config->getUserAgent()) {
-			$this->logger?->debug('Using User-Agent: ' . $this->config->getUserAgent());	
-			$defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-		}
-
-		$headers = array_merge(
-			$defaultHeaders,
-			$headerParams,
-			$headers
-		);
-		
-		// Special handling for accept_header_parameter to set the Accept header directly
-		/** @phpstan-ignore-next-line */
-		if (isset($accept_header_parameter) && $accept_header_parameter !== null) {
-			$this->logger?->debug('Overriding Accept header: ' . $accept_header_parameter);
-			/** @phpstan-ignore-next-line */
-			$headers['Accept'] = ObjectSerializer::toHeaderValue($accept_header_parameter);
-		}
-
-		$operationHost = $this->config->getHost();
-		$query = ObjectSerializer::buildQuery($queryParams);
-		return new Request(
-			'GET',
-			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-			$headers,
-			is_string($httpBody) ? $httpBody : (string)$httpBody
-		);
-	}
-
-	/**
-	 * Operation listTrainingCategories
-	 *
-	 * Get Training Categories
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
-	 *
-	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
-	 * @throws \InvalidArgumentException
-	 * @return \BhrSdk\Model\TrainingCategoryList[]
-	 */
-	public function listTrainingCategories(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
-		list($response) = $this->listTrainingCategoriesWithHttpInfo($contentType);
-		return $response;
-	}
-
-	/**
-	 * Operation listTrainingCategoriesWithHttpInfo
-	 *
-	 * Get Training Categories
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
-	 *
-	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
-	 * @throws \InvalidArgumentException
-	 * @return array of \BhrSdk\Model\TrainingCategoryList[], HTTP status code, HTTP response headers (array of strings)
-	 */
-	public function listTrainingCategoriesWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
-		$request = $this->listTrainingCategoriesRequest($contentType);
-		$options = ApiHelper::createHttpClientOption($this->config);
-		
-		// Send request with retry support for timeout errors
-		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
-
-		$statusCode = $response->getStatusCode();
-
-		switch($statusCode) {
-			case 200:
-				return ApiHelper::handleResponseWithDataType(
-					'\BhrSdk\Model\TrainingCategoryList[]',
-					$request,
-					$response,
-				);
-		}
-
-		if ($statusCode < 200 || $statusCode > 299) {
-			throw new ApiException(
-				sprintf(
-					'[%d] Error connecting to the API (%s)',
-					$statusCode,
-					(string) $request->getUri()
-				),
-				$statusCode,
-				$response->getHeaders(),
-				(string) $response->getBody()
-			);
-		}
-
-		return ApiHelper::handleResponseWithDataType(
-			'\BhrSdk\Model\TrainingCategoryList[]',
-			$request,
-			$response,
-		);
-	}
-
-	/**
-	 * Operation listTrainingCategoriesAsync
-	 *
-	 * Get Training Categories
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Promise\PromiseInterface
-	 */
-	public function listTrainingCategoriesAsync(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
-		return $this->listTrainingCategoriesAsyncWithHttpInfo($contentType)
-			->then(
-				function ($response) {
-					return $response[0];
-				}
-			);
-	}
-
-	/**
-	 * Operation listTrainingCategoriesAsyncWithHttpInfo
-	 *
-	 * Get Training Categories
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Promise\PromiseInterface
-	 */
-	public function listTrainingCategoriesAsyncWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
-		$returnType = '\BhrSdk\Model\TrainingCategoryList[]';
-		$request = $this->listTrainingCategoriesRequest($contentType);
-
-		return ApiHelper::sendRequestWithRetriesAsync($this->logger, $this->client, $this->config, $request, ApiHelper::createHttpClientOption($this->config))
-			->then(
-				function ($response) use ($returnType) {
-					$content = (string) $response->getBody();
-					if ($returnType !== 'string') {
-						$content = json_decode($content);
-					}
-
-					return [
-						ObjectSerializer::deserialize($content, $returnType, []),
-						$response->getStatusCode(),
-						$response->getHeaders()
-					];
-				},
-				function ($exception) {
-					$response = $exception->getResponse();
-					$statusCode = $response->getStatusCode();
-					throw new ApiException(
-						sprintf(
-							'[%d] Error connecting to the API (%s)',
-							$statusCode,
-							$exception->getRequest()->getUri()
-						),
-						$statusCode,
-						$response->getHeaders(),
-						(string) $response->getBody()
-					);
-				}
-			);
-	}
-
-	/**
-	 * Create request for operation 'listTrainingCategories'
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Psr7\Request
-	 */
-	public function listTrainingCategoriesRequest(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
-
-		$resourcePath = '/api/v1/training/category';
-		$this->logger?->info('Request method: [GET], URL: ' . $resourcePath);
-		
-		$queryParams = [];
-		$headerParams = [];
-		$httpBody = '';
-		$multipart = false;
-
-		$headers = $this->headerSelector->selectHeaders(
-			['application/json', ],
-			$contentType,
-			$multipart
-		);
-
-		// Authentication methods
-		
-		// Basic authentication
-		if (!empty($this->config->getUsername()) || !(empty($this->config->getPassword()))) {
-			$this->logger?->info('Using Basic authentication');	
-			$headers['Authorization'] = 'Basic ' . base64_encode($this->config->getUsername() . ":" . $this->config->getPassword());
-		}
-		
-		// OAuth/Bearer authentication
-		if (!empty($this->config->getAccessToken())) {
-			$this->logger?->info('Using Bearer authentication');
-			$headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-		}
-
-		$defaultHeaders = [];
-		if ($this->config->getUserAgent()) {
-			$this->logger?->debug('Using User-Agent: ' . $this->config->getUserAgent());	
-			$defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-		}
-
-		$headers = array_merge(
-			$defaultHeaders,
-			$headerParams,
-			$headers
-		);
-		
-		// Special handling for accept_header_parameter to set the Accept header directly
-		/** @phpstan-ignore-next-line */
-		if (isset($accept_header_parameter) && $accept_header_parameter !== null) {
-			$this->logger?->debug('Overriding Accept header: ' . $accept_header_parameter);
-			/** @phpstan-ignore-next-line */
-			$headers['Accept'] = ObjectSerializer::toHeaderValue($accept_header_parameter);
-		}
-
-		$operationHost = $this->config->getHost();
-		$query = ObjectSerializer::buildQuery($queryParams);
-		return new Request(
-			'GET',
-			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-			$headers,
-			is_string($httpBody) ? $httpBody : (string)$httpBody
-		);
-	}
-
-	/**
-	 * Operation listTrainingTypes
-	 *
-	 * Get Training Types
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingTypes'] to see the possible values for this operation
-	 *
-	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
-	 * @throws \InvalidArgumentException
-	 * @return \BhrSdk\Model\TrainingTypeList[]
-	 */
-	public function listTrainingTypes(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
-		list($response) = $this->listTrainingTypesWithHttpInfo($contentType);
-		return $response;
-	}
-
-	/**
-	 * Operation listTrainingTypesWithHttpInfo
-	 *
-	 * Get Training Types
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingTypes'] to see the possible values for this operation
-	 *
-	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
-	 * @throws \InvalidArgumentException
-	 * @return array of \BhrSdk\Model\TrainingTypeList[], HTTP status code, HTTP response headers (array of strings)
-	 */
-	public function listTrainingTypesWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
-		$request = $this->listTrainingTypesRequest($contentType);
-		$options = ApiHelper::createHttpClientOption($this->config);
-		
-		// Send request with retry support for timeout errors
-		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
-
-		$statusCode = $response->getStatusCode();
-
-		switch($statusCode) {
-			case 200:
-				return ApiHelper::handleResponseWithDataType(
-					'\BhrSdk\Model\TrainingTypeList[]',
-					$request,
-					$response,
-				);
-		}
-
-		if ($statusCode < 200 || $statusCode > 299) {
-			throw new ApiException(
-				sprintf(
-					'[%d] Error connecting to the API (%s)',
-					$statusCode,
-					(string) $request->getUri()
-				),
-				$statusCode,
-				$response->getHeaders(),
-				(string) $response->getBody()
-			);
-		}
-
-		return ApiHelper::handleResponseWithDataType(
-			'\BhrSdk\Model\TrainingTypeList[]',
-			$request,
-			$response,
-		);
-	}
-
-	/**
-	 * Operation listTrainingTypesAsync
-	 *
-	 * Get Training Types
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingTypes'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Promise\PromiseInterface
-	 */
-	public function listTrainingTypesAsync(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
-		return $this->listTrainingTypesAsyncWithHttpInfo($contentType)
-			->then(
-				function ($response) {
-					return $response[0];
-				}
-			);
-	}
-
-	/**
-	 * Operation listTrainingTypesAsyncWithHttpInfo
-	 *
-	 * Get Training Types
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingTypes'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Promise\PromiseInterface
-	 */
-	public function listTrainingTypesAsyncWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
-		$returnType = '\BhrSdk\Model\TrainingTypeList[]';
-		$request = $this->listTrainingTypesRequest($contentType);
-
-		return ApiHelper::sendRequestWithRetriesAsync($this->logger, $this->client, $this->config, $request, ApiHelper::createHttpClientOption($this->config))
-			->then(
-				function ($response) use ($returnType) {
-					$content = (string) $response->getBody();
-					if ($returnType !== 'string') {
-						$content = json_decode($content);
-					}
-
-					return [
-						ObjectSerializer::deserialize($content, $returnType, []),
-						$response->getStatusCode(),
-						$response->getHeaders()
-					];
-				},
-				function ($exception) {
-					$response = $exception->getResponse();
-					$statusCode = $response->getStatusCode();
-					throw new ApiException(
-						sprintf(
-							'[%d] Error connecting to the API (%s)',
-							$statusCode,
-							$exception->getRequest()->getUri()
-						),
-						$statusCode,
-						$response->getHeaders(),
-						(string) $response->getBody()
-					);
-				}
-			);
-	}
-
-	/**
-	 * Create request for operation 'listTrainingTypes'
-	 *
-	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingTypes'] to see the possible values for this operation
-	 *
-	 * @throws \InvalidArgumentException
-	 * @return \GuzzleHttp\Psr7\Request
-	 */
-	public function listTrainingTypesRequest(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
-
-		$resourcePath = '/api/v1/training/type';
-		$this->logger?->info('Request method: [GET], URL: ' . $resourcePath);
-		
-		$queryParams = [];
-		$headerParams = [];
-		$httpBody = '';
-		$multipart = false;
-
-		$headers = $this->headerSelector->selectHeaders(
-			['application/json', ],
-			$contentType,
-			$multipart
-		);
-
-		// Authentication methods
-		
-		// Basic authentication
-		if (!empty($this->config->getUsername()) || !(empty($this->config->getPassword()))) {
-			$this->logger?->info('Using Basic authentication');	
-			$headers['Authorization'] = 'Basic ' . base64_encode($this->config->getUsername() . ":" . $this->config->getPassword());
-		}
-		
-		// OAuth/Bearer authentication
-		if (!empty($this->config->getAccessToken())) {
-			$this->logger?->info('Using Bearer authentication');
-			$headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
-		}
-
-		$defaultHeaders = [];
-		if ($this->config->getUserAgent()) {
-			$this->logger?->debug('Using User-Agent: ' . $this->config->getUserAgent());	
-			$defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-		}
-
-		$headers = array_merge(
-			$defaultHeaders,
-			$headerParams,
-			$headers
-		);
-		
-		// Special handling for accept_header_parameter to set the Accept header directly
-		/** @phpstan-ignore-next-line */
-		if (isset($accept_header_parameter) && $accept_header_parameter !== null) {
-			$this->logger?->debug('Overriding Accept header: ' . $accept_header_parameter);
-			/** @phpstan-ignore-next-line */
-			$headers['Accept'] = ObjectSerializer::toHeaderValue($accept_header_parameter);
-		}
-
-		$operationHost = $this->config->getHost();
-		$query = ObjectSerializer::buildQuery($queryParams);
-		return new Request(
-			'GET',
 			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
 			$headers,
 			is_string($httpBody) ? $httpBody : (string)$httpBody
@@ -2200,11 +1567,11 @@ class TrainingApi {
 	public function updateEmployeeTrainingRecordRequest($employee_training_record_id, $update_employee_training_record_request, string $contentType = self::CONTENT_TYPES['updateEmployeeTrainingRecord'][0]) {
 		// PHP 8.0+ only
 		ApiHelper::validateRequiredParameters(
-			params: [
+			[
 				'employee_training_record_id' => $employee_training_record_id,
 				'update_employee_training_record_request' => $update_employee_training_record_request,
 			],
-			methodName: 'updateEmployeeTrainingRecord'
+			'updateEmployeeTrainingRecord'
 		);
 
 		$resourcePath = '/api/v1/training/record/{employeeTrainingRecordId}';
@@ -2434,11 +1801,11 @@ class TrainingApi {
 	public function updateTrainingCategoryRequest($training_category_id, $update_training_category_request, string $contentType = self::CONTENT_TYPES['updateTrainingCategory'][0]) {
 		// PHP 8.0+ only
 		ApiHelper::validateRequiredParameters(
-			params: [
+			[
 				'training_category_id' => $training_category_id,
 				'update_training_category_request' => $update_training_category_request,
 			],
-			methodName: 'updateTrainingCategory'
+			'updateTrainingCategory'
 		);
 
 		$resourcePath = '/api/v1/training/category/{trainingCategoryId}';
@@ -2658,7 +2025,6 @@ class TrainingApi {
 	/**
 	 * Create request for operation 'updateTrainingType'
 	 *
-	 * @param  int $training_type_id The ID of the training type to update. (required)
 	 * @param  \BhrSdk\Model\UpdateTrainingTypeRequest $update_training_type_request Training type object to update to (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['updateTrainingType'] to see the possible values for this operation
 	 *
@@ -2749,6 +2115,623 @@ class TrainingApi {
 			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
 			$headers,
 			is_string($httpBody) ? $httpBody : (string)$httpBody
+		);
+	}
+
+	/**
+	 * Operation listEmployeeTrainings
+	 *
+	 * Get Employee Trainings
+	 *
+	 * @param  int $employee_id The ID of the employee to get a list of trainings for. (required)
+	 * @param  int|null $training_type_id The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee. (optional)
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listEmployeeTrainings'] to see the possible values for this operation
+	 *
+	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
+	 * @throws \InvalidArgumentException
+	 * @return \stdClass[]
+	 */
+	public function listEmployeeTrainings($employee_id, $training_type_id = null, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
+		list($response) = $this->listEmployeeTrainingsWithHttpInfo($employee_id, $training_type_id, $contentType);
+		return $response;
+	}
+
+	/**
+	 * Operation listEmployeeTrainingsWithHttpInfo
+	 *
+	 * Get Employee Trainings
+	 *
+	 * @param  int $employee_id The ID of the employee to get a list of trainings for. (required)
+	 * @param  int|null $training_type_id The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee. (optional)
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listEmployeeTrainings'] to see the possible values for this operation
+	 *
+	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
+	 * @throws \InvalidArgumentException
+	 * @return array of \stdClass[], HTTP status code, HTTP response headers (array of strings)
+	 */
+	public function listEmployeeTrainingsWithHttpInfo($employee_id, $training_type_id = null, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
+		$request = $this->listEmployeeTrainingsRequest($employee_id, $training_type_id, $contentType);
+		$options = ApiHelper::createHttpClientOption($this->config);
+
+		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
+		$statusCode = $response->getStatusCode();
+
+		switch ($statusCode) {
+			case 200:
+				return ApiHelper::handleResponseWithDataType(
+					'\\stdClass[]',
+					$request,
+					$response,
+				);
+		}
+
+		if ($statusCode < 200 || $statusCode > 299) {
+			throw new ApiException(
+				sprintf(
+					'[%d] Error connecting to the API (%s)',
+					$statusCode,
+					(string) $request->getUri()
+				),
+				$statusCode,
+				$response->getHeaders(),
+				(string) $response->getBody()
+			);
+		}
+
+		return ApiHelper::handleResponseWithDataType(
+			'\\stdClass[]',
+			$request,
+			$response,
+		);
+	}
+
+	/**
+	 * Operation listEmployeeTrainingsAsync
+	 *
+	 * Get Employee Trainings
+	 *
+	 * @param  int $employee_id
+	 * @param  int|null $training_type_id
+	 * @param  string $contentType
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Promise\PromiseInterface
+	 */
+	public function listEmployeeTrainingsAsync($employee_id, $training_type_id = null, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
+		return $this->listEmployeeTrainingsAsyncWithHttpInfo($employee_id, $training_type_id, $contentType)
+			->then(
+				function ($response) {
+					return $response[0];
+				}
+			);
+	}
+
+	/**
+	 * Operation listEmployeeTrainingsAsyncWithHttpInfo
+	 *
+	 * Get Employee Trainings
+	 *
+	 * @param  int $employee_id
+	 * @param  int|null $training_type_id
+	 * @param  string $contentType
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Promise\PromiseInterface
+	 */
+	public function listEmployeeTrainingsAsyncWithHttpInfo($employee_id, $training_type_id = null, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
+		$returnType = '\\stdClass[]';
+		$request = $this->listEmployeeTrainingsRequest($employee_id, $training_type_id, $contentType);
+
+		return ApiHelper::sendRequestWithRetriesAsync(
+			$this->logger,
+			$this->client,
+			$this->config,
+			$request,
+			ApiHelper::createHttpClientOption($this->config)
+		)
+			->then(
+				function ($response) use ($returnType) {
+					$content = (string) $response->getBody();
+					if ($returnType !== 'string') {
+						$content = json_decode($content);
+					}
+
+					return [
+						ObjectSerializer::deserialize($content, $returnType, []),
+						$response->getStatusCode(),
+						$response->getHeaders()
+					];
+				},
+				function ($exception) {
+					$response = $exception->getResponse();
+					$statusCode = $response->getStatusCode();
+					throw new ApiException(
+						sprintf(
+							'[%d] Error connecting to the API (%s)',
+							$statusCode,
+							(string) $exception->getRequest()->getUri()
+						),
+						$statusCode,
+						$response->getHeaders(),
+						(string) $response->getBody()
+					);
+				}
+			);
+	}
+
+	/**
+	 * Create request for operation 'listEmployeeTrainings'
+	 *
+	 * @param  int $employee_id
+	 * @param  int|null $training_type_id
+	 * @param  string $contentType
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Psr7\Request
+	 */
+	public function listEmployeeTrainingsRequest($employee_id, $training_type_id = null, string $contentType = self::CONTENT_TYPES['listEmployeeTrainings'][0]) {
+		ApiHelper::validateRequiredParameters(
+			[
+				'employee_id' => $employee_id,
+			],
+			'listEmployeeTrainings'
+		);
+
+		$resourcePath = '/api/v1/training/record/employee/{employeeId}';
+		$this->logger?->info('Request method: [GET], URL: ' . $resourcePath);
+
+		$queryParams = [];
+		$headerParams = [];
+		$httpBody = '';
+		$multipart = false;
+
+		// path params
+		if ($employee_id !== null) {
+			$resourcePath = str_replace(
+				'{' . 'employeeId' . '}',
+				ObjectSerializer::toPathValue((string) $employee_id),
+				$resourcePath
+			);
+		}
+
+		// query params
+		if ($training_type_id !== null) {
+			$queryParams['trainingTypeId'] = ObjectSerializer::toQueryValue(
+				$training_type_id,
+				'trainingTypeId',
+				'int',
+				'form',
+				true,
+				false
+			)['trainingTypeId'] ?? $training_type_id;
+		}
+
+		$headers = $this->headerSelector->selectHeaders(
+			['application/json'],
+			$contentType,
+			$multipart
+		);
+
+		// Authentication methods
+		if (!empty($this->config->getUsername()) || !(empty($this->config->getPassword()))) {
+			$this->logger?->info('Using Basic authentication');
+			$headers['Authorization'] = 'Basic ' . base64_encode($this->config->getUsername() . ":" . $this->config->getPassword());
+		}
+
+		if (!empty($this->config->getAccessToken())) {
+			$this->logger?->info('Using Bearer authentication');
+			$headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+		}
+
+		$defaultHeaders = [];
+		if ($this->config->getUserAgent()) {
+			$this->logger?->debug('Using User-Agent: ' . $this->config->getUserAgent());
+			$defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+		}
+
+		$headers = array_merge(
+			$defaultHeaders,
+			$headerParams,
+			$headers
+		);
+
+		$operationHost = $this->config->getHost();
+		$query = ObjectSerializer::buildQuery($queryParams);
+		return new Request(
+			'GET',
+			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+			$headers,
+			is_string($httpBody) ? $httpBody : (string) $httpBody
+		);
+	}
+
+	/**
+	 * Operation listTrainingCategories
+	 *
+	 * Get Training Categories
+	 *
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
+	 *
+	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
+	 * @throws \InvalidArgumentException
+	 * @return \stdClass[]
+	 */
+	public function listTrainingCategories(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
+		list($response) = $this->listTrainingCategoriesWithHttpInfo($contentType);
+		return $response;
+	}
+
+	/**
+	 * Operation listTrainingCategoriesWithHttpInfo
+	 *
+	 * Get Training Categories
+	 *
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
+	 *
+	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
+	 * @throws \InvalidArgumentException
+	 * @return array of \stdClass[], HTTP status code, HTTP response headers (array of strings)
+	 */
+	public function listTrainingCategoriesWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
+		$request = $this->listTrainingCategoriesRequest($contentType);
+		$options = ApiHelper::createHttpClientOption($this->config);
+
+		// Send request with retry support for timeout errors
+		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
+
+		$statusCode = $response->getStatusCode();
+
+		switch ($statusCode) {
+			case 200:
+				return ApiHelper::handleResponseWithDataType(
+					'\\stdClass[]',
+					$request,
+					$response,
+				);
+		}
+
+		if ($statusCode < 200 || $statusCode > 299) {
+			throw new ApiException(
+				sprintf(
+					'[%d] Error connecting to the API (%s)',
+					$statusCode,
+					(string) $request->getUri()
+				),
+				$statusCode,
+				$response->getHeaders(),
+				(string) $response->getBody()
+			);
+		}
+
+		return ApiHelper::handleResponseWithDataType(
+			'\\stdClass[]',
+			$request,
+			$response,
+		);
+	}
+
+	/**
+	 * Operation listTrainingCategoriesAsync
+	 *
+	 * Get Training Categories
+	 *
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Promise\PromiseInterface
+	 */
+	public function listTrainingCategoriesAsync(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
+		return $this->listTrainingCategoriesAsyncWithHttpInfo($contentType)
+			->then(
+				function ($response) {
+					return $response[0];
+				}
+			);
+	}
+
+	/**
+	 * Operation listTrainingCategoriesAsyncWithHttpInfo
+	 *
+	 * Get Training Categories
+	 *
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Promise\PromiseInterface
+	 */
+	public function listTrainingCategoriesAsyncWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
+		$returnType = '\\stdClass[]';
+		$request = $this->listTrainingCategoriesRequest($contentType);
+
+		return ApiHelper::sendRequestWithRetriesAsync(
+			$this->logger,
+			$this->client,
+			$this->config,
+			$request,
+			ApiHelper::createHttpClientOption($this->config)
+		)
+			->then(
+				function ($response) use ($returnType) {
+					$content = (string) $response->getBody();
+					if ($returnType !== 'string') {
+						$content = json_decode($content);
+					}
+
+					return [
+						ObjectSerializer::deserialize($content, $returnType, []),
+						$response->getStatusCode(),
+						$response->getHeaders()
+					];
+				},
+				function ($exception) {
+					$response = $exception->getResponse();
+					$statusCode = $response->getStatusCode();
+					throw new ApiException(
+						sprintf(
+							'[%d] Error connecting to the API (%s)',
+							$statusCode,
+							(string) $exception->getRequest()->getUri()
+						),
+						$statusCode,
+						$response->getHeaders(),
+						(string) $response->getBody()
+					);
+				}
+			);
+	}
+
+	/**
+	 * Create request for operation 'listTrainingCategories'
+	 *
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingCategories'] to see the possible values for this operation
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Psr7\Request
+	 */
+	public function listTrainingCategoriesRequest(string $contentType = self::CONTENT_TYPES['listTrainingCategories'][0]) {
+		$resourcePath = '/api/v1/training/category';
+		$this->logger?->info('Request method: [GET], URL: ' . $resourcePath);
+
+		$queryParams = [];
+		$headerParams = [];
+		$httpBody = '';
+		$multipart = false;
+
+		$headers = $this->headerSelector->selectHeaders(
+			['application/json', 'application/xml', ],
+			$contentType,
+			$multipart
+		);
+
+		// Authentication methods
+		// Basic authentication
+		if (!empty($this->config->getUsername()) || !(empty($this->config->getPassword()))) {
+			$this->logger?->info('Using Basic authentication');
+			$headers['Authorization'] = 'Basic ' . base64_encode($this->config->getUsername() . ":" . $this->config->getPassword());
+		}
+
+		// OAuth/Bearer authentication
+		if (!empty($this->config->getAccessToken())) {
+			$this->logger?->info('Using Bearer authentication');
+			$headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+		}
+
+		$defaultHeaders = [];
+		if ($this->config->getUserAgent()) {
+			$this->logger?->debug('Using User-Agent: ' . $this->config->getUserAgent());
+			$defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+		}
+
+		$headers = array_merge(
+			$defaultHeaders,
+			$headerParams,
+			$headers
+		);
+
+		// Special handling for accept_header_parameter to set the Accept header directly
+		/** @phpstan-ignore-next-line */
+		if (isset($accept_header_parameter) && $accept_header_parameter !== null) {
+			$this->logger?->debug('Overriding Accept header: ' . $accept_header_parameter);
+			/** @phpstan-ignore-next-line */
+			$headers['Accept'] = ObjectSerializer::toHeaderValue($accept_header_parameter);
+		}
+
+		$operationHost = $this->config->getHost();
+		$query = ObjectSerializer::buildQuery($queryParams);
+		return new Request(
+			'GET',
+			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+			$headers,
+			is_string($httpBody) ? $httpBody : (string) $httpBody
+		);
+	}
+
+	/**
+	 * Operation listTrainingTypes
+	 *
+	 * Get Training Types
+	 *
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingTypes'] to see the possible values for this operation
+	 *
+	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
+	 * @throws \InvalidArgumentException
+	 * @return \stdClass[]
+	 */
+	public function listTrainingTypes(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
+		list($response) = $this->listTrainingTypesWithHttpInfo($contentType);
+		return $response;
+	}
+
+	/**
+	 * Operation listTrainingTypesWithHttpInfo
+	 *
+	 * Get Training Types
+	 *
+	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['listTrainingTypes'] to see the possible values for this operation
+	 *
+	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
+	 * @throws \InvalidArgumentException
+	 * @return array of \stdClass[], HTTP status code, HTTP response headers (array of strings)
+	 */
+	public function listTrainingTypesWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
+		$request = $this->listTrainingTypesRequest($contentType);
+		$options = ApiHelper::createHttpClientOption($this->config);
+
+		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
+		$statusCode = $response->getStatusCode();
+
+		switch ($statusCode) {
+			case 200:
+				return ApiHelper::handleResponseWithDataType(
+					'\\stdClass[]',
+					$request,
+					$response,
+				);
+		}
+
+		if ($statusCode < 200 || $statusCode > 299) {
+			throw new ApiException(
+				sprintf(
+					'[%d] Error connecting to the API (%s)',
+					$statusCode,
+					(string) $request->getUri()
+				),
+				$statusCode,
+				$response->getHeaders(),
+				(string) $response->getBody()
+			);
+		}
+
+		return ApiHelper::handleResponseWithDataType(
+			'\\stdClass[]',
+			$request,
+			$response,
+		);
+	}
+
+	/**
+	 * Operation listTrainingTypesAsync
+	 *
+	 * Get Training Types
+	 *
+	 * @param  string $contentType
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Promise\PromiseInterface
+	 */
+	public function listTrainingTypesAsync(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
+		return $this->listTrainingTypesAsyncWithHttpInfo($contentType)
+			->then(
+				function ($response) {
+					return $response[0];
+				}
+			);
+	}
+
+	/**
+	 * Operation listTrainingTypesAsyncWithHttpInfo
+	 *
+	 * Get Training Types
+	 *
+	 * @param  string $contentType
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Promise\PromiseInterface
+	 */
+	public function listTrainingTypesAsyncWithHttpInfo(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
+		$returnType = '\\stdClass[]';
+		$request = $this->listTrainingTypesRequest($contentType);
+
+		return ApiHelper::sendRequestWithRetriesAsync(
+			$this->logger,
+			$this->client,
+			$this->config,
+			$request,
+			ApiHelper::createHttpClientOption($this->config)
+		)
+			->then(
+				function ($response) use ($returnType) {
+					$content = (string) $response->getBody();
+					if ($returnType !== 'string') {
+						$content = json_decode($content);
+					}
+
+					return [
+						ObjectSerializer::deserialize($content, $returnType, []),
+						$response->getStatusCode(),
+						$response->getHeaders()
+					];
+				},
+				function ($exception) {
+					$response = $exception->getResponse();
+					$statusCode = $response->getStatusCode();
+					throw new ApiException(
+						sprintf(
+							'[%d] Error connecting to the API (%s)',
+							$statusCode,
+							(string) $exception->getRequest()->getUri()
+						),
+						$statusCode,
+						$response->getHeaders(),
+						(string) $response->getBody()
+					);
+				}
+			);
+	}
+
+	/**
+	 * Create request for operation 'listTrainingTypes'
+	 *
+	 * @param  string $contentType
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \GuzzleHttp\Psr7\Request
+	 */
+	public function listTrainingTypesRequest(string $contentType = self::CONTENT_TYPES['listTrainingTypes'][0]) {
+		$resourcePath = '/api/v1/training/type';
+		$this->logger?->info('Request method: [GET], URL: ' . $resourcePath);
+
+		$queryParams = [];
+		$headerParams = [];
+		$httpBody = '';
+		$multipart = false;
+
+		$headers = $this->headerSelector->selectHeaders(
+			['application/json'],
+			$contentType,
+			$multipart
+		);
+
+		// Authentication methods
+		if (!empty($this->config->getUsername()) || !(empty($this->config->getPassword()))) {
+			$this->logger?->info('Using Basic authentication');
+			$headers['Authorization'] = 'Basic ' . base64_encode($this->config->getUsername() . ":" . $this->config->getPassword());
+		}
+
+		if (!empty($this->config->getAccessToken())) {
+			$this->logger?->info('Using Bearer authentication');
+			$headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+		}
+
+		$defaultHeaders = [];
+		if ($this->config->getUserAgent()) {
+			$this->logger?->debug('Using User-Agent: ' . $this->config->getUserAgent());
+			$defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+		}
+
+		$headers = array_merge(
+			$defaultHeaders,
+			$headerParams,
+			$headers
+		);
+
+		$operationHost = $this->config->getHost();
+		$query = ObjectSerializer::buildQuery($queryParams);
+		return new Request(
+			'GET',
+			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+			$headers,
+			is_string($httpBody) ? $httpBody : (string) $httpBody
 		);
 	}
 

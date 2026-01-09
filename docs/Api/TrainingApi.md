@@ -456,7 +456,7 @@ try {
 ## `listTrainingCategories()`
 
 ```php
-listTrainingCategories(): \BhrSdk\Model\TrainingCategoryList[]
+listTrainingCategories(): \BhrSdk\Model\TrainingCategory[]
 ```
 
 Get Training Categories
@@ -497,7 +497,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**\BhrSdk\Model\TrainingCategoryList[]**](../Model/TrainingCategoryList.md)
+[**\BhrSdk\Model\TrainingCategory[]**](../Model/TrainingCategory.md)
 
 ### Authorization
 

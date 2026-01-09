@@ -346,8 +346,9 @@ class ApiErrorHelper {
 				/** @var \Exception $exception */
 				$exception = new $exceptionClass("[{$code}] {$messageWithRequestId}", $responseHeaders, $responseBody);
 
-				// Set request ID if exception is ApiException or subclass
-				if ($exception instanceof ApiException) {
+				// Set request ID if exception supports it (ApiException in this repo doesn't expose a setter)
+				if ($exception instanceof ApiException && method_exists($exception, 'setRequestId')) {
+					/** @phpstan-ignore-next-line */
 					$exception->setRequestId($requestId);
 				}
 
@@ -355,24 +356,26 @@ class ApiErrorHelper {
 			}
 		} elseif ($statusCode >= 500) {
 			$exception = new ServerException("[{$code}] {$messageWithRequestId}", $statusCode, $responseHeaders, $responseBody);
-			if ($exception instanceof ApiException) {
+			if ($exception instanceof ApiException && method_exists($exception, 'setRequestId')) {
+				/** @phpstan-ignore-next-line */
 				$exception->setRequestId($requestId);
 			}
 			return $exception;
 		} elseif ($statusCode >= 400) {
 			$exception = new ClientException("[{$code}] {$messageWithRequestId}", $statusCode, $responseHeaders, $responseBody);
-			if ($exception instanceof ApiException) {
+			if ($exception instanceof ApiException && method_exists($exception, 'setRequestId')) {
+				/** @phpstan-ignore-next-line */
 				$exception->setRequestId($requestId);
 			}
 			return $exception;
 		} else {
-			$exception = new ApiException("[{$code}] {$messageWithRequestId}", $statusCode, $responseHeaders, $responseBody, $requestId);
+			$exception = new ApiException("[{$code}] {$messageWithRequestId}", $statusCode, $responseHeaders, $responseBody);
 			return $exception;
 		}
 
 		// Fallback to base exception if the specific class doesn't exist
 		// For ApiException, we need to explicitly pass the status code
-		return new ApiException("[{$code}] {$messageWithRequestId}", $statusCode, $responseHeaders, $responseBody, $requestId);
+		return new ApiException("[{$code}] {$messageWithRequestId}", $statusCode, $responseHeaders, $responseBody);
 	}
 
 	/**

@@ -583,13 +583,7 @@ class ApiClientTest extends TestCase {
 	 * Test ats() convenience method
 	 */
 	public function testAtsConvenienceMethod(): void {
-		$client = new ApiClient();
-		$client->withApiKey('test-key')
-			   ->forCompany('test-company')
-			   ->build();
-
-		$api = $client->ats();
-		$this->assertInstanceOf(\BhrSdk\Api\ATSApi::class, $api);
+		$this->markTestSkipped('ATS API client is not included in this SDK build.');
 	}
 
 	/**

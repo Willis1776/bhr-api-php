@@ -40,6 +40,7 @@ class ApiClient {
 	private ?ClientInterface $httpClient = null;
 	private ?AuthBuilder $authBuilder = null;
 	private LoggerInterface $logger;
+	private bool $loggingEnabled = false;
 	private ?HeaderSelector $headerSelector = null;
 	private int $hostIndex = 0;
 	private ?TokenManager $tokenManager = null;
@@ -74,8 +75,13 @@ class ApiClient {
 	) {
 		$this->config = new Configuration();
 		$this->authBuilder = $authBuilder;
-		// Always initialize logger - use disabled logger if none provided
-		$this->logger = $logger ?? new SecureLogger(false);
+		if ($logger === null) {
+			$this->logger = new SecureLogger(false);
+			$this->loggingEnabled = false;
+		} else {
+			$this->logger = $logger;
+			$this->loggingEnabled = true;
+		}
 	}
 
 	/**
@@ -275,6 +281,7 @@ class ApiClient {
 		} else {
 			$this->logger = $logger;
 		}
+		$this->loggingEnabled = true;
 
 		$this->log('info', 'Logging enabled', ['level' => $logLevel]);
 
@@ -506,12 +513,17 @@ class ApiClient {
 	}
 
 	/**
-	 * Convenience method to get ATSApi instance
+	 * Convenience method to get AtsApi instance
 	 *
-	 * @return \BhrSdk\Api\ATSApi
+	 * @return mixed
 	 */
-	public function ats(): \BhrSdk\Api\ATSApi {
-		return $this->getApi(\BhrSdk\Api\ATSApi::class);
+	public function ats() {
+		$apiClass = '\\BhrSdk\\Api\\ATSApi';
+		if (!class_exists($apiClass)) {
+			throw new \InvalidArgumentException("ATS API client is not included in this SDK build");
+		}
+
+		return $this->getApi($apiClass);
 	}
 
 	/**
@@ -596,7 +608,7 @@ class ApiClient {
 	 * @return LoggerInterface|null
 	 */
 	public function getLogger(): ?LoggerInterface {
-		return $this->logger;
+		return $this->loggingEnabled ? $this->logger : null;
 	}
 
 	/**

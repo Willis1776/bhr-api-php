@@ -401,6 +401,12 @@ class ObjectSerializer {
 		if (strcasecmp(substr($class, -2), '[]') === 0) {
 			$data = is_string($data) ? json_decode($data) : $data;
 
+			// Some endpoints return an object-of-objects (map) even when the spec indicates an array.
+			// Treat stdClass like an associative array and ignore keys.
+			if ($data instanceof \stdClass) {
+				$data = array_values((array)$data);
+			}
+
 			if (!is_array($data)) {
 				throw new \InvalidArgumentException("Invalid array '$class'");
 			}
@@ -491,7 +497,24 @@ class ObjectSerializer {
 		}
 
 		/** @psalm-suppress ParadoxicalCondition */
-		if (in_array($class, ['\DateTime', '\SplFileObject', 'array', 'bool', 'boolean', 'byte', 'float', 'int', 'integer', 'mixed', 'number', 'object', 'string', 'void'], true)) {
+		if (in_array($class, ['\\DateTime', '\\SplFileObject', '\\stdClass', 'array', 'bool', 'boolean', 'byte', 'float', 'int', 'integer', 'mixed', 'number', 'object', 'string', 'void'], true)) {
+			// Special-case stdClass: ensure we return an object
+			if ($class === '\\stdClass') {
+				if (is_string($data)) {
+					$data = json_decode($data);
+				}
+				if (is_array($data)) {
+					return (object) $data;
+				}
+				if ($data instanceof \stdClass) {
+					return $data;
+				}
+				// Scalars/null -> wrap into object with a generic value field
+				$o = new \stdClass();
+				$o->value = $data;
+				return $o;
+			}
+
 			settype($data, $class);
 			return $data;
 		}

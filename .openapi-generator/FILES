@@ -163,7 +163,6 @@ docs/Model/TimeTrackingRecordSchemaShiftDifferential.md
 docs/Model/TimeTrackingTask.md
 docs/Model/TimesheetEntryInfoApiTransformer.md
 docs/Model/TrainingCategory.md
-docs/Model/TrainingCategoryList.md
 docs/Model/TrainingRecord.md
 docs/Model/TrainingRecordList.md
 docs/Model/TrainingType.md
@@ -364,7 +363,6 @@ lib/Model/TimeTrackingRecordSchemaShiftDifferential.php
 lib/Model/TimeTrackingTask.php
 lib/Model/TimesheetEntryInfoApiTransformer.php
 lib/Model/TrainingCategory.php
-lib/Model/TrainingCategoryList.php
 lib/Model/TrainingRecord.php
 lib/Model/TrainingRecordList.php
 lib/Model/TrainingType.php

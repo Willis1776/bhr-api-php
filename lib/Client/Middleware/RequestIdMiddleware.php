@@ -90,24 +90,30 @@ class RequestIdMiddleware {
 	 * @return void
 	 */
 	public static function extractRequestId(ResponseInterface $response): void {
-		// Get all headers for case-insensitive comparison
+		// Prefer PSR-7 header helpers when available
+		if (method_exists($response, 'hasHeader') && $response->hasHeader(self::REQUEST_ID_HEADER)) {
+			$requestId = $response->getHeaderLine(self::REQUEST_ID_HEADER);
+			if ($requestId !== '') {
+				self::$lastRequestId = $requestId;
+				if (self::$logger) {
+					self::$logger->log('debug', 'Request ID received', [
+						'request_id' => self::$lastRequestId,
+					]);
+				}
+			}
+			return;
+		}
+
+		// Fallback: scan full header map case-insensitively
 		$headers = $response->getHeaders();
-		
-		// Target header name (lowercase for comparison)
 		$targetHeader = strtolower(self::REQUEST_ID_HEADER);
-		
-		// Track whether header was found and its value
+
 		$headerFound = false;
 		$requestId = null;
-		$actualHeaderName = null;
-		
-		// Case-insensitive search through headers
+
 		foreach ($headers as $name => $values) {
 			if (strtolower($name) === $targetHeader) {
 				$headerFound = true;
-				$actualHeaderName = $name;
-				
-				// Extract the first value if it's an array
 				if (is_array($values) && !empty($values)) {
 					$requestId = $values[0];
 				} else {
@@ -116,16 +122,12 @@ class RequestIdMiddleware {
 				break;
 			}
 		}
-		
-		// Store the request ID if found
+
 		if ($headerFound && $requestId !== null && $requestId !== '') {
 			self::$lastRequestId = $requestId;
-			
 			if (self::$logger) {
-				self::$logger->log('debug', 'Request ID extracted', [
+				self::$logger->log('debug', 'Request ID received', [
 					'request_id' => self::$lastRequestId,
-					'header_name' => $actualHeaderName,
-					'header_case' => 'Matched using case-insensitive comparison'
 				]);
 			}
 		}

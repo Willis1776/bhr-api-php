@@ -539,7 +539,6 @@ Class | Method | HTTP request | Description
 - [TimeTrackingTask](docs/Model/TimeTrackingTask.md)
 - [TimesheetEntryInfoApiTransformer](docs/Model/TimesheetEntryInfoApiTransformer.md)
 - [TrainingCategory](docs/Model/TrainingCategory.md)
-- [TrainingCategoryList](docs/Model/TrainingCategoryList.md)
 - [TrainingRecord](docs/Model/TrainingRecord.md)
 - [TrainingRecordList](docs/Model/TrainingRecordList.md)
 - [TrainingType](docs/Model/TrainingType.md)
