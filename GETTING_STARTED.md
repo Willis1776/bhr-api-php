@@ -86,7 +86,7 @@ You should see:
 ```
 name     : bamboohr/api
 descrip. : BambooHR API documentation...
-versions : * 2.0.1
+versions : * 2.0.2
 ```
 
 ### Set Up Autoloading
