@@ -550,7 +550,7 @@ class EmployeesApi {
 	 *
 	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
 	 * @throws \InvalidArgumentException
-	 * @return \BhrSdk\Model\Employee
+	 * @return array
 	 */
 	public function getEmployee($fields, $id, $only_current = false, $accept_header_parameter = null, string $contentType = self::CONTENT_TYPES['getEmployee'][0]) {
 		list($response) = $this->getEmployeeWithHttpInfo($fields, $id, $only_current, $accept_header_parameter, $contentType);
@@ -570,7 +570,7 @@ class EmployeesApi {
 	 *
 	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
 	 * @throws \InvalidArgumentException
-	 * @return array of \BhrSdk\Model\Employee, HTTP status code, HTTP response headers (array of strings)
+	 * @return array of array, HTTP status code, HTTP response headers (array of strings)
 	 */
 	public function getEmployeeWithHttpInfo($fields, $id, $only_current = false, $accept_header_parameter = null, string $contentType = self::CONTENT_TYPES['getEmployee'][0]) {
 		$request = $this->getEmployeeRequest($fields, $id, $only_current, $accept_header_parameter, $contentType);
@@ -584,7 +584,7 @@ class EmployeesApi {
 		switch($statusCode) {
 			case 200:
 				return ApiHelper::handleResponseWithDataType(
-					'\BhrSdk\Model\Employee',
+					'object',
 					$request,
 					$response,
 				);
@@ -604,7 +604,7 @@ class EmployeesApi {
 		}
 
 		return ApiHelper::handleResponseWithDataType(
-			'\BhrSdk\Model\Employee',
+			'object',
 			$request,
 			$response,
 		);
@@ -648,7 +648,7 @@ class EmployeesApi {
 	 * @return \GuzzleHttp\Promise\PromiseInterface
 	 */
 	public function getEmployeeAsyncWithHttpInfo($fields, $id, $only_current = false, $accept_header_parameter = null, string $contentType = self::CONTENT_TYPES['getEmployee'][0]) {
-		$returnType = '\BhrSdk\Model\Employee';
+		$returnType = 'object';
 		$request = $this->getEmployeeRequest($fields, $id, $only_current, $accept_header_parameter, $contentType);
 
 		return ApiHelper::sendRequestWithRetriesAsync($this->logger, $this->client, $this->config, $request, ApiHelper::createHttpClientOption($this->config))
@@ -1242,15 +1242,15 @@ class EmployeesApi {
 	 * Update Employee
 	 *
 	 * @param  string $id {id} is an employee ID. (required)
-	 * @param  \BhrSdk\Model\Employee $employee employee (required)
+	 * @param  object|array $payload Arbitrary employee fields to update. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['updateEmployee'] to see the possible values for this operation
 	 *
 	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
 	 * @throws \InvalidArgumentException
 	 * @return mixed
 	 */
-	public function updateEmployee($id, $employee, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
-		list($response) = $this->updateEmployeeWithHttpInfo($id, $employee, $contentType);
+	public function updateEmployee($id, $payload, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
+		list($response) = $this->updateEmployeeWithHttpInfo($id, $payload, $contentType);
 		return $response;
 	}
 
@@ -1260,24 +1260,24 @@ class EmployeesApi {
 	 * Update Employee
 	 *
 	 * @param  string $id {id} is an employee ID. (required)
-	 * @param  \BhrSdk\Model\Employee $employee (required)
+	 * @param  object|array $payload Arbitrary employee fields to update. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['updateEmployee'] to see the possible values for this operation
 	 *
 	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
 	 * @throws \InvalidArgumentException
 	 * @return array of null, HTTP status code, HTTP response headers (array of strings)
 	 */
-	public function updateEmployeeWithHttpInfo($id, $employee, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
-		$request = $this->updateEmployeeRequest($id, $employee, $contentType);
+	public function updateEmployeeWithHttpInfo($id, $payload, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
+		$request = $this->updateEmployeeRequest($id, $payload, $contentType);
 		$options = ApiHelper::createHttpClientOption($this->config);
 		
 		// Send request with retry support for timeout errors
 		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
 
-		$statusCode = $response->getStatusCode();
-
+		// BambooHR often returns an empty body (or non-JSON) for successful updates.
+		// Treat it as a string/void response to avoid JSON decoding errors.
 		return ApiHelper::handleResponseWithDataType(
-			'object', // or 'mixed' or any other generic type
+			'string',
 			$request,
 			$response,
 		);
@@ -1289,14 +1289,14 @@ class EmployeesApi {
 	 * Update Employee
 	 *
 	 * @param  string $id {id} is an employee ID. (required)
-	 * @param  \BhrSdk\Model\Employee $employee (required)
+	 * @param  object|array $payload Arbitrary employee fields to update. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['updateEmployee'] to see the possible values for this operation
 	 *
 	 * @throws \InvalidArgumentException
 	 * @return \GuzzleHttp\Promise\PromiseInterface
 	 */
-	public function updateEmployeeAsync($id, $employee, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
-		return $this->updateEmployeeAsyncWithHttpInfo($id, $employee, $contentType)
+	public function updateEmployeeAsync($id, $payload, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
+		return $this->updateEmployeeAsyncWithHttpInfo($id, $payload, $contentType)
 			->then(
 				function ($response) {
 					return $response[0];
@@ -1310,24 +1310,23 @@ class EmployeesApi {
 	 * Update Employee
 	 *
 	 * @param  string $id {id} is an employee ID. (required)
-	 * @param  \BhrSdk\Model\Employee $employee (required)
+	 * @param  object|array $payload Arbitrary employee fields to update. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['updateEmployee'] to see the possible values for this operation
 	 *
 	 * @throws \InvalidArgumentException
 	 * @return \GuzzleHttp\Promise\PromiseInterface
 	 */
-	public function updateEmployeeAsyncWithHttpInfo($id, $employee, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
-		
-		$request = $this->updateEmployeeRequest($id, $employee, $contentType);
+	public function updateEmployeeAsyncWithHttpInfo($id, $payload, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
+		$request = $this->updateEmployeeRequest($id, $payload, $contentType);
 
 		return ApiHelper::sendRequestWithRetriesAsync($this->logger, $this->client, $this->config, $request, ApiHelper::createHttpClientOption($this->config))
 			->then(
 				function ($response) {
+					// BambooHR often returns an empty body (or non-JSON) for successful updates.
 					$content = (string) $response->getBody();
-					$content = json_decode($content);
 
 					return [
-						ObjectSerializer::deserialize($content, 'object', []),
+						ObjectSerializer::deserialize($content, 'string', []),
 						$response->getStatusCode(),
 						$response->getHeaders()
 					];
@@ -1353,18 +1352,18 @@ class EmployeesApi {
 	 * Create request for operation 'updateEmployee'
 	 *
 	 * @param  string $id {id} is an employee ID. (required)
-	 * @param  \BhrSdk\Model\Employee $employee (required)
+	 * @param  object|array $payload Arbitrary employee fields to update. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['updateEmployee'] to see the possible values for this operation
 	 *
 	 * @throws \InvalidArgumentException
 	 * @return \GuzzleHttp\Psr7\Request
 	 */
-	public function updateEmployeeRequest($id, $employee, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
+	public function updateEmployeeRequest($id, $payload, string $contentType = self::CONTENT_TYPES['updateEmployee'][0]) {
 		// PHP 8.0+ only
 		ApiHelper::validateRequiredParameters(
 			params: [
 				'id' => $id,
-				'employee' => $employee,
+				'payload' => $payload,
 			],
 			methodName: 'updateEmployee'
 		);
@@ -1392,15 +1391,19 @@ class EmployeesApi {
 			$multipart
 		);
 
-		// for model (json/xml)
-		if (isset($employee)) {
+		// for payload (json/xml)
+		if (isset($payload)) {
 			if (stripos($headers['Content-Type'], 'application/json') !== false) {
-				# if Content-Type contains "application/json", json_encode the body
-				$httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($employee));
+				// json_encode a plain object payload as an associative array so it becomes a JSON object
+				$normalizedPayload = $payload;
+				if ($payload instanceof \stdClass) {
+					$normalizedPayload = (array) $payload;
+				}
+				$httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($normalizedPayload));
 			} else {
-				$httpBody = is_array($employee) ? json_encode($employee) : $employee;
+				$httpBody = is_array($payload) ? json_encode($payload) : $payload;
 			}
-		} 
+		}
 
 		// Authentication methods
 		

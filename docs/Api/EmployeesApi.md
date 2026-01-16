@@ -135,12 +135,14 @@ This endpoint does not need any parameter.
 ## `getEmployee()`
 
 ```php
-getEmployee($fields, $id, $only_current, $accept_header_parameter): \BhrSdk\Model\Employee
+getEmployee($fields, $id, $only_current, $accept_header_parameter): array
 ```
 
 Get Employee
 
 Get employee data by specifying a set of fields. This is suitable for getting basic employee information, including current values for fields that are part of a historical table, like job title, or compensation information. See the [fields](ref:metadata-get-a-list-of-fields) endpoint for a list of possible fields.
+
+**Note:** This SDK returns a generic associative array because the API can return arbitrary fields depending on the `fields` query parameter.
 
 ### Example
 
@@ -169,6 +171,8 @@ $accept_header_parameter = 'accept_header_parameter_example'; // string | This e
 try {
     $result = $apiInstance->getEmployee($fields, $id, $only_current, $accept_header_parameter);
     print_r($result);
+    // Example access:
+    // echo $result['firstName'] ?? null;
 } catch (Exception $e) {
     echo 'Exception when calling EmployeesApi->getEmployee: ', $e->getMessage(), PHP_EOL;
 }
@@ -185,7 +189,7 @@ try {
 
 ### Return type
 
-[**\BhrSdk\Model\Employee**](../Model/Employee.md)
+**array** (associative array of arbitrary employee fields)
 
 ### Authorization
 
@@ -331,12 +335,14 @@ try {
 ## `updateEmployee()`
 
 ```php
-updateEmployee($id, $employee)
+updateEmployee($id, $payload): string
 ```
 
 Update Employee
 
 Update an employee, based on employee ID. If employee is currently on a pay schedule syncing with Trax Payroll, or being added to one, the API user will need to update the employee with all of the following required fields for the update to be successful (listed by API field name): employeeNumber, firstName, lastName, dateOfBirth, ssn or ein, gender, maritalStatus, hireDate, address1, city, state, country, employmentHistoryStatus, exempt, payType, payRate, payPer, location, department, and division.
+
+**Note:** This SDK accepts a generic payload (`object|array`) so callers can send any fields supported by the BambooHR API.
 
 ### Example
 
@@ -358,10 +364,16 @@ $apiInstance = new BhrSdk\Api\EmployeesApi(
     $config
 );
 $id = 'id_example'; // string | {id} is an employee ID.
-$employee = new \BhrSdk\Model\Employee(); // \BhrSdk\Model\Employee
+$payload = [
+    'firstName' => 'Jane',
+    'lastName' => 'Doe',
+    // any other fields you want to update...
+]; // object|array
 
 try {
-    $apiInstance->updateEmployee($id, $employee);
+    $result = $apiInstance->updateEmployee($id, $payload);
+    // BambooHR often returns an empty body for successful updates
+    var_dump($result);
 } catch (Exception $e) {
     echo 'Exception when calling EmployeesApi->updateEmployee: ', $e->getMessage(), PHP_EOL;
 }
@@ -372,11 +384,11 @@ try {
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
 | **id** | **string**| {id} is an employee ID. | |
-| **employee** | [**\BhrSdk\Model\Employee**](../Model/Employee.md)|  | |
+| **payload** | **object\|array**| Arbitrary employee fields to update. Sent as JSON. | |
 
 ### Return type
 
-void (empty response body)
+**string** (often an empty string on success)
 
 ### Authorization
 

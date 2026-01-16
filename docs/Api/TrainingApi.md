@@ -392,7 +392,7 @@ void (empty response body)
 ## `listEmployeeTrainings()`
 
 ```php
-listEmployeeTrainings($employee_id, $training_type_id): \BhrSdk\Model\TrainingRecordList[]
+listEmployeeTrainings($employee_id, $training_type_id): \stdClass[]
 ```
 
 Get Employee Trainings
@@ -438,7 +438,7 @@ try {
 
 ### Return type
 
-[**\BhrSdk\Model\TrainingRecordList[]**](../Model/TrainingRecordList.md)
+**\stdClass[]** (array of generic objects)
 
 ### Authorization
 
@@ -456,12 +456,14 @@ try {
 ## `listTrainingCategories()`
 
 ```php
-listTrainingCategories(): \BhrSdk\Model\TrainingCategory[]
+listTrainingCategories(): \stdClass[]
 ```
 
 Get Training Categories
 
 Get a list of training categories. The owner of the API key used must have access to training settings.
+
+**Note:** BambooHR returns this as an object-of-objects keyed by category id. The SDK ignores the keys and returns an array of objects with `id` and `name`.
 
 ### Example
 
@@ -497,7 +499,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**\BhrSdk\Model\TrainingCategory[]**](../Model/TrainingCategory.md)
+**\stdClass[]** (array of objects like `{ id, name }`)
 
 ### Authorization
 
@@ -515,7 +517,7 @@ This endpoint does not need any parameter.
 ## `listTrainingTypes()`
 
 ```php
-listTrainingTypes(): \BhrSdk\Model\TrainingTypeList[]
+listTrainingTypes(): \stdClass[]
 ```
 
 Get Training Types
@@ -556,7 +558,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**\BhrSdk\Model\TrainingTypeList[]**](../Model/TrainingTypeList.md)
+**\stdClass[]** (array of generic objects)
 
 ### Authorization
 

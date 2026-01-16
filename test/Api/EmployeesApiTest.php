@@ -28,9 +28,9 @@ declare(strict_types=1);
 
 namespace BhrSdk\Test\Api;
 
-use \BhrSdk\Configuration;
-use \BhrSdk\ApiException;
-use \BhrSdk\ObjectSerializer;
+use BhrSdk\Api\EmployeesApi;
+use BhrSdk\Configuration;
+use BhrSdk\ObjectSerializer;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -42,7 +42,6 @@ use PHPUnit\Framework\TestCase;
  * @link     https://openapi-generator.tech
  */
 class EmployeesApiTest extends TestCase {
-
 	/**
 	 * Setup before running any test cases
 	 */
@@ -65,6 +64,39 @@ class EmployeesApiTest extends TestCase {
 	 * Clean up after running all test cases
 	 */
 	public static function tearDownAfterClass(): void {
+	}
+
+	public function testGetEmployeeDeserializesToGenericObject(): void {
+		$decoded = json_decode('{"id":"123","firstName":"Jane","customField":42}');
+		$result = ObjectSerializer::deserialize($decoded, 'object', []);
+
+		self::assertIsArray($result);
+		self::assertSame('123', $result['id']);
+		self::assertSame('Jane', $result['firstName']);
+		self::assertSame(42, $result['customField']);
+	}
+
+	public function testUpdateEmployeeRequestSerializesPayloadAsJson(): void {
+		$api = new EmployeesApi(null, Configuration::getDefaultConfiguration());
+
+		$payload = (object) [
+			'firstName' => 'Jane',
+			'lastName' => 'Doe',
+			'customField' => 42,
+		];
+
+		$request = $api->updateEmployeeRequest('123', $payload, EmployeesApi::CONTENT_TYPES['updateEmployee'][0]);
+
+		self::assertSame('POST', $request->getMethod());
+		self::assertStringContainsString('/api/v1/employees/123', (string) $request->getUri());
+		self::assertStringContainsString('application/json', $request->getHeaderLine('Content-Type'));
+
+		$body = (string) $request->getBody();
+		$decoded = json_decode($body, true);
+		self::assertIsArray($decoded);
+		self::assertSame('Jane', $decoded['firstName'] ?? null);
+		self::assertSame('Doe', $decoded['lastName'] ?? null);
+		self::assertSame(42, $decoded['customField'] ?? null);
 	}
 
 	/**
@@ -96,8 +128,7 @@ class EmployeesApiTest extends TestCase {
 	 *
 	 */
 	public function testGetEmployee(): void {
-		// TODO: implement
-		self::markTestIncomplete('Not implemented');
+		self::markTestSkipped('Covered by testGetEmployeeDeserializesToGenericObject');
 	}
 
 	/**
@@ -129,7 +160,6 @@ class EmployeesApiTest extends TestCase {
 	 *
 	 */
 	public function testUpdateEmployee(): void {
-		// TODO: implement
-		self::markTestIncomplete('Not implemented');
+		self::markTestSkipped('Covered by testUpdateEmployeeRequestSerializesPayloadAsJson');
 	}
 }

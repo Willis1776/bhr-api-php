@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changelog file to track version history
 
+## [2.1.0] - 2026-01-16
+
+### Changed
+
+- **Training API**: `listTrainingCategories()`, `listTrainingTypes()`, and `listEmployeeTrainings()` now return arrays of generic objects (`\stdClass[]`) instead of generated model lists.
+- **Training API**: `listTrainingCategories()` now supports BambooHR's "object-of-objects" response format (keys are ignored; values are returned as objects with `id` and `name`).
+- **Employees API**: `getEmployee()` now returns a generic associative array (to support dynamic field sets returned by BambooHR).
+- **Employees API**: `updateEmployee()` now accepts a generic payload (`object|array`) and sends it as JSON.
+- **Employees API**: `updateEmployee()` now tolerates empty/non-JSON success responses from BambooHR and returns the raw body as a string (often empty).
+
+### Fixed
+
+- `ObjectSerializer::deserialize()` now supports "object-of-objects" responses when deserializing arrays (`Foo[]`), by ignoring keys and deserializing values.
+
 ## [2.0.2] - 2025-12-09
 
 ### Added
@@ -56,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **BREAKING**: Minimum PHP version requirement increased to 8.1
-- **BREAKING**: Namespace changed from `BambooHR\API\` to `BhrSdk\`
+- **BREAKING**: Namespace changed from `BambooHR\\API\\` to `BhrSdk\\`
 - **BREAKING**: Modernized API client architecture with fluent interface (builder pattern)
 - **BREAKING**: Method return types changed
 - **BREAKING**: Parameter order changes in some methods (e.g., fields before ID)
@@ -68,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 - Direct configuration object manipulation (use fluent interface instead)
-- Old namespace `BambooHR\API\` (use `BhrSdk\` instead)
+- Old namespace `BambooHR\\API\\` (use `BhrSdk\\` instead)
 
 ### Removed
 
@@ -97,6 +111,7 @@ For changes in version 1.x.x and earlier, please refer to the git commit history
 
 ## Version History Links
 
-[Unreleased]: https://github.com/BambooHR/bhr-api-php/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/BambooHR/bhr-api-php/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/BambooHR/bhr-api-php/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/BambooHR/bhr-api-php/compare/v2.0.0...v2.0.2
 [2.0.0]: https://github.com/BambooHR/bhr-api-php/releases/tag/v2.0.0
