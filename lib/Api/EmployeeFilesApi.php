@@ -1180,14 +1180,18 @@ class EmployeeFilesApi {
 	 * Upload Employee File
 	 *
 	 * @param  string $id {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any). (required)
+	 * @param  string|int $category the category ID to place the new file in. (required)
+	 * @param  string $file_name the file name to associate with the file. (required)
+	 * @param  string $share whether to make the file available to the employee ("yes" or "no"). (required)
+	 * @param  mixed $file the file to upload. Can be a resource, SplFileObject/SplFileInfo, or a string path. The field must be named "file". (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['uploadEmployeeFile'] to see the possible values for this operation
 	 *
 	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
 	 * @throws \InvalidArgumentException
-	 * @return mixed
+	 * @return string Raw response body (often empty) on success (201)
 	 */
-	public function uploadEmployeeFile($id, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
-		list($response) = $this->uploadEmployeeFileWithHttpInfo($id, $contentType);
+	public function uploadEmployeeFile($id, $category, string $file_name, string $share, $file, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
+		list($response) = $this->uploadEmployeeFileWithHttpInfo($id, $category, $file_name, $share, $file, $contentType);
 		return $response;
 	}
 
@@ -1197,23 +1201,32 @@ class EmployeeFilesApi {
 	 * Upload Employee File
 	 *
 	 * @param  string $id {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any). (required)
+	 * @param  string|int $category the category ID to place the new file in. (required)
+	 * @param  string $file_name the file name to associate with the file. (required)
+	 * @param  string $share whether to make the file available to the employee ("yes" or "no"). (required)
+	 * @param  mixed $file the file to upload. Can be a resource, SplFileObject/SplFileInfo, or a string path. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['uploadEmployeeFile'] to see the possible values for this operation
 	 *
 	 * @throws \BhrSdk\ApiException on non-2xx response or if the response body is not in the expected format
 	 * @throws \InvalidArgumentException
-	 * @return array of null, HTTP status code, HTTP response headers (array of strings)
+	 * @return array of string, HTTP status code, HTTP response headers (array of strings)
 	 */
-	public function uploadEmployeeFileWithHttpInfo($id, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
-		$request = $this->uploadEmployeeFileRequest($id, $contentType);
+	public function uploadEmployeeFileWithHttpInfo($id, $category, string $file_name, string $share, $file, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
+		$request = $this->uploadEmployeeFileRequest($id, $category, $file_name, $share, $file, $contentType);
 		$options = ApiHelper::createHttpClientOption($this->config);
 		
 		// Send request with retry support for timeout errors
 		$response = ApiHelper::sendRequestWithRetries($this->logger, $this->client, $this->config, $request, $options);
 
+		// BambooHR returns 201 with an empty/non-JSON body here.
 		$statusCode = $response->getStatusCode();
+		if ($statusCode === 201) {
+			return [(string) $response->getBody(), $statusCode, $response->getHeaders()];
+		}
 
+		// fall back to standard handling for non-201 responses
 		return ApiHelper::handleResponseWithDataType(
-			'object', // or 'mixed' or any other generic type
+			'string',
 			$request,
 			$response,
 		);
@@ -1225,13 +1238,17 @@ class EmployeeFilesApi {
 	 * Upload Employee File
 	 *
 	 * @param  string $id {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any). (required)
+	 * @param  string|int $category the category ID to place the new file in. (required)
+	 * @param  string $file_name the file name to associate with the file. (required)
+	 * @param  string $share whether to make the file available to the employee ("yes" or "no"). (required)
+	 * @param  mixed $file the file to upload. Can be a resource, SplFileObject/SplFileInfo, or a string path. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['uploadEmployeeFile'] to see the possible values for this operation
 	 *
 	 * @throws \InvalidArgumentException
 	 * @return \GuzzleHttp\Promise\PromiseInterface
 	 */
-	public function uploadEmployeeFileAsync($id, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
-		return $this->uploadEmployeeFileAsyncWithHttpInfo($id, $contentType)
+	public function uploadEmployeeFileAsync($id, $category, string $file_name, string $share, $file, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
+		return $this->uploadEmployeeFileAsyncWithHttpInfo($id, $category, $file_name, $share, $file, $contentType)
 			->then(
 				function ($response) {
 					return $response[0];
@@ -1245,26 +1262,28 @@ class EmployeeFilesApi {
 	 * Upload Employee File
 	 *
 	 * @param  string $id {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any). (required)
+	 * @param  string|int $category the category ID to place the new file in. (required)
+	 * @param  string $file_name the file name to associate with the file. (required)
+	 * @param  string $share whether to make the file available to the employee ("yes" or "no"). (required)
+	 * @param  mixed $file the file to upload. Can be a resource, SplFileObject/SplFileInfo, or a string path. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['uploadEmployeeFile'] to see the possible values for this operation
 	 *
 	 * @throws \InvalidArgumentException
 	 * @return \GuzzleHttp\Promise\PromiseInterface
 	 */
-	public function uploadEmployeeFileAsyncWithHttpInfo($id, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
-		
-		$request = $this->uploadEmployeeFileRequest($id, $contentType);
+	public function uploadEmployeeFileAsyncWithHttpInfo($id, $category, string $file_name, string $share, $file, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
+
+		$request = $this->uploadEmployeeFileRequest($id, $category, $file_name, $share, $file, $contentType);
 
 		return ApiHelper::sendRequestWithRetriesAsync($this->logger, $this->client, $this->config, $request, ApiHelper::createHttpClientOption($this->config))
 			->then(
 				function ($response) {
+					// 201 usually has an empty body.
+					if ($response->getStatusCode() === 201) {
+						return [(string) $response->getBody(), $response->getStatusCode(), $response->getHeaders()];
+					}
 					$content = (string) $response->getBody();
-					$content = json_decode($content);
-
-					return [
-						ObjectSerializer::deserialize($content, 'object', []),
-						$response->getStatusCode(),
-						$response->getHeaders()
-					];
+					return [$content, $response->getStatusCode(), $response->getHeaders()];
 				},
 				function ($exception) {
 					$response = $exception->getResponse();
@@ -1287,27 +1306,39 @@ class EmployeeFilesApi {
 	 * Create request for operation 'uploadEmployeeFile'
 	 *
 	 * @param  string $id {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any). (required)
+	 * @param  string|int $category the category ID to place the new file in. (required)
+	 * @param  string $file_name the file name to associate with the file. (required)
+	 * @param  string $share whether to make the file available to the employee ("yes" or "no"). (required)
+	 * @param  mixed $file the file to upload. Can be a resource, SplFileObject/SplFileInfo, or a string path. (required)
 	 * @param  string $contentType The value for the Content-Type header. Check self::CONTENT_TYPES['uploadEmployeeFile'] to see the possible values for this operation
 	 *
 	 * @throws \InvalidArgumentException
 	 * @return \GuzzleHttp\Psr7\Request
 	 */
-	public function uploadEmployeeFileRequest($id, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
+	public function uploadEmployeeFileRequest($id, $category, string $file_name, string $share, $file, string $contentType = self::CONTENT_TYPES['uploadEmployeeFile'][0]) {
 		// PHP 8.0+ only
 		ApiHelper::validateRequiredParameters(
 			params: [
 				'id' => $id,
+				'category' => $category,
+				'file_name' => $file_name,
+				'share' => $share,
+				'file' => $file,
 			],
 			methodName: 'uploadEmployeeFile'
 		);
+
+		$share = strtolower(trim($share));
+		if ($share !== 'yes' && $share !== 'no') {
+			throw new \InvalidArgumentException('Invalid value for "$share". Expected "yes" or "no".');
+		}
 
 		$resourcePath = '/api/v1/employees/{id}/files';
 		$this->logger?->info('Request method: [POST], URL: ' . $resourcePath);
 		
 		$queryParams = [];
 		$headerParams = [];
-		$httpBody = '';
-		$multipart = false;
+		$multipart = true;
 
 		// path params
 		if ($id !== null) {
@@ -1318,11 +1349,48 @@ class EmployeeFilesApi {
 			);
 		}
 
+		$filenameForUpload = $file_name;
+		$fileContents = $file;
+		if ($file instanceof \SplFileInfo) {
+			$filenameForUpload = $file->getBasename();
+			$fileContents = fopen($file->getPathname(), 'rb');
+		}
+		if ($file instanceof \SplFileObject) {
+			$filenameForUpload = $file->getBasename();
+			$fileContents = fopen($file->getRealPath(), 'rb');
+		}
+		if (is_string($file) && file_exists($file)) {
+			$filenameForUpload = $file_name ?: basename($file);
+			$fileContents = fopen($file, 'rb');
+		}
+
+		$formParams = [];
+		$formParams['category'] = (string) $category;
+		$formParams['fileName'] = $file_name;
+		$formParams['share'] = $share;
+
+		$multipartContents = [];
+		foreach ($formParams as $formParamName => $formParamValue) {
+			$multipartContents[] = [
+				'name' => $formParamName,
+				'contents' => $formParamValue,
+			];
+		}
+		$multipartContents[] = [
+			'name' => 'file',
+			'contents' => $fileContents,
+			'filename' => $filenameForUpload,
+		];
+
+		$httpBody = new MultipartStream($multipartContents);
+
+		// Use multipart headers and ensure the boundary is included
 		$headers = $this->headerSelector->selectHeaders(
-			['application/json', ],
+			['application/json', 'text/plain', '*/*'],
 			$contentType,
 			$multipart
 		);
+		$headers['Content-Type'] = 'multipart/form-data; boundary=' . $httpBody->getBoundary();
 
 		// Authentication methods
 		
@@ -1350,21 +1418,13 @@ class EmployeeFilesApi {
 			$headers
 		);
 		
-		// Special handling for accept_header_parameter to set the Accept header directly
-		/** @phpstan-ignore-next-line */
-		if (isset($accept_header_parameter) && $accept_header_parameter !== null) {
-			$this->logger?->debug('Overriding Accept header: ' . $accept_header_parameter);
-			/** @phpstan-ignore-next-line */
-			$headers['Accept'] = ObjectSerializer::toHeaderValue($accept_header_parameter);
-		}
-
 		$operationHost = $this->config->getHost();
 		$query = ObjectSerializer::buildQuery($queryParams);
 		return new Request(
 			'POST',
 			$operationHost . $resourcePath . ($query ? "?{$query}" : ''),
 			$headers,
-			is_string($httpBody) ? $httpBody : (string)$httpBody
+			$httpBody
 		);
 	}
 

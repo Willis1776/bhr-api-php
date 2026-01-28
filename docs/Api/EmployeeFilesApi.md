@@ -328,12 +328,19 @@ void (empty response body)
 ## `uploadEmployeeFile()`
 
 ```php
-uploadEmployeeFile($id)
+uploadEmployeeFile($id, $category, $file_name, $share, $file)
 ```
 
 Upload Employee File
 
-Upload an employee file
+Upload an employee file.
+
+This endpoint uses `multipart/form-data` with these required form fields:
+
+- `category` (category ID)
+- `fileName` (the name to associate with the file)
+- `share` (`yes` or `no`)
+- `file` (the file content; the field name must be `file`)
 
 ### Example
 
@@ -345,19 +352,19 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $config = BhrSdk\Configuration::getDefaultConfiguration()
               ->setApiKey('x-api-key', 'YOUR_API_KEY');
 
-// Or configure OAuth2 access token for authorization
-// $config = BhrSdk\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_ACCESS_TOKEN');
-
 $apiInstance = new BhrSdk\Api\EmployeeFilesApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
     $config
 );
-$id = '0'; // string | {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any).
+
+$id = '1';
+$category = 112;
+$fileName = 'readme.txt';
+$share = 'yes';
+$file = __DIR__ . '/readme.txt'; // can also be a resource or SplFileInfo
 
 try {
-    $apiInstance->uploadEmployeeFile($id);
+    $apiInstance->uploadEmployeeFile($id, $category, $fileName, $share, $file);
 } catch (Exception $e) {
     echo 'Exception when calling EmployeeFilesApi->uploadEmployeeFile: ', $e->getMessage(), PHP_EOL;
 }
@@ -367,11 +374,15 @@ try {
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **id** | **string**| {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any). | [default to &#39;0&#39;] |
+| **id** | **string**| {id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any). | [default to '0'] |
+| **category** | **string\|int**| The category ID to place the new file in. | |
+| **file_name** | **string**| The file name to associate with the file (`fileName` form field). | |
+| **share** | **string**| Whether to make the file available to the employee. Allowed values: `yes`, `no`. | |
+| **file** | **mixed**| The file to upload (resource, `SplFileInfo`/`SplFileObject`, or a filesystem path string). The form field name must be `file`. | |
 
 ### Return type
 
-void (empty response body)
+**string** (raw response body; BambooHR commonly returns an empty body with HTTP 201)
 
 ### Authorization
 
@@ -379,7 +390,7 @@ void (empty response body)
 
 ### HTTP request headers
 
-- **Content-Type**: `application/json`
+- **Content-Type**: `multipart/form-data`
 - **Accept**: `application/json`
 
 [[Back to top]](#) [[Back to API list]](../../README.md#endpoints)
