@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changelog file to track version history
 
+## [2.1.1] - 2026-01-29
+
+### Changed
+
+- Bump package version to 2.1.1.
+
 ## [2.1.0] - 2026-01-16
 
 ### Changed
@@ -111,7 +117,8 @@ For changes in version 1.x.x and earlier, please refer to the git commit history
 
 ## Version History Links
 
-[Unreleased]: https://github.com/BambooHR/bhr-api-php/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/BambooHR/bhr-api-php/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/BambooHR/bhr-api-php/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/BambooHR/bhr-api-php/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/BambooHR/bhr-api-php/compare/v2.0.0...v2.0.2
 [2.0.0]: https://github.com/BambooHR/bhr-api-php/releases/tag/v2.0.0
